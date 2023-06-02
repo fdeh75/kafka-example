@@ -1,0 +1,36 @@
+version: "2.4"
+services:
+  kafka:
+    image: bitnami/kafka:3.4.0-debian-11-r36
+    volumes:
+      - "./certs:/opt/bitnami/kafka/config/certs"
+    ports:
+      - '0.0.0.0:32772:9094'
+
+    environment:
+
+      KAFKA_ENABLE_KRAFT: yes
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTER_BROKER
+      KAFKA_CFG_LISTENERS: INTER_BROKER://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTER_BROKER:PLAINTEXT,EXTERNAL:SASL_SSL
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTER_BROKER://kafka:9092,EXTERNAL://127.0.0.1:32772
+      KAFKA_CFG_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_CFG_SECURITY_PROTOCOL: SASL_SSL
+      KAFKA_CFG_SSL_KEYSTORE_LOCATION: /opt/bitnami/kafka/config/certs/kafka.keystore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_LOCATION: /opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: my_pass
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: my_pass
+      KAFKA_CFG_SSL_KEY_PASSWORD: my_pass
+      KAFKA_CFG_LISTENER_NAME_EXTERNAL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="foobar" password="qwerty" user_foobar="qwerty";
+
+
+#librdkafka:
+# ....
+# "sasl.username": "foobar",
+# "sasl.password": "qwerty",
+# "sasl.mechanism": "PLAIN",
+# "enable.ssl.certificate.verification": false, //self signed certificate
+# "security.protocol": "sasl_ssl",
+# ....
